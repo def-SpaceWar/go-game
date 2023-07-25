@@ -7,7 +7,4 @@ updated: 2023-07-25
 @end
 
 * TODO
-  - ( ) Add all the GetComponent methods in the World struct.
-  -- ( ) GetComponents
-  -- ( ) FindComponent
-  -- ( ) FindComponents
+  - Make an ECS with proper generics

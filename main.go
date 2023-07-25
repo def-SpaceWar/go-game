@@ -1,29 +1,52 @@
 package main
 
-import "fmt"
-
-var currentWorld World
+import (
+	"github.com/veandco/go-sdl2/sdl"
+	"gogame/ecs"
+)
 
 func main() {
-	currentWorld = World{
-		entityCount: 0,
-		components:  []Component{},
-		systems:     []System{},
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		panic(err)
 	}
+	defer sdl.Quit()
 
-	myEntity := currentWorld.GenerateEntity().
-		Position(Vector{100, 100})
-
-	component, err := myEntity.GetComponent(&Position)
+	window, err := sdl.CreateWindow(
+		"test",
+		sdl.WINDOWPOS_UNDEFINED,
+		sdl.WINDOWPOS_UNDEFINED,
+		800,
+		600,
+		sdl.WINDOW_SHOWN,
+	)
 
 	if err != nil {
-		fmt.Println(err)
-		return
-	} else {
-		fmt.Println(component)
+		panic(err)
 	}
+	defer window.Destroy()
 
-	for {
-		currentWorld.RunSystems()
+	surface, err := window.GetSurface()
+	if err != nil {
+		panic(err)
+	}
+	surface.FillRect(nil, 0)
+
+	rect := sdl.Rect{X: 0, Y: 0, W: 200, H: 200}
+	colour := sdl.Color{R: 255, G: 0, B: 255, A: 255} // purple
+	pixel := sdl.MapRGBA(surface.Format, colour.R, colour.G, colour.B, colour.A)
+
+	running := true
+	for running {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				println("Closed Window")
+				running = false
+				break
+			}
+		}
+
+		surface.FillRect(&rect, pixel)
+		window.UpdateSurface()
 	}
 }
