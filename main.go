@@ -11,9 +11,17 @@ func main() {
 		systems:     []System{},
 	}
 
-	fmt.Println(currentWorld.GenerateEntity())
-	fmt.Println(currentWorld.GenerateEntity())
-	fmt.Println(currentWorld.GenerateEntity())
+	myEntity := currentWorld.GenerateEntity().
+		Position(Vector{100, 100})
+
+	component, err := myEntity.GetComponent(&Position)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	} else {
+		fmt.Println(component)
+	}
 
 	for {
 		currentWorld.RunSystems()

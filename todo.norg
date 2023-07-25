@@ -1,0 +1,5 @@
+* TODO
+  - ( ) Add all the GetComponent methods in the World struct.
+  -- ( ) GetComponents
+  -- ( ) FindComponent
+  -- ( ) FindComponents

@@ -1,7 +1,7 @@
 package main
 
 type ComponentData interface {
-    Type() string;
+    Type() *string;
 }
 
 type Component struct {
