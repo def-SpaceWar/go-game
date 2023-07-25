@@ -1,3 +1,11 @@
+@document.meta
+title: TODO
+description: All the pending TODO objectives for this project.
+authors: aryan
+created: 2023-07-25
+updated: 2023-07-25
+@end
+
 * TODO
   - ( ) Add all the GetComponent methods in the World struct.
   -- ( ) GetComponents
