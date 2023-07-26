@@ -1,9 +1,14 @@
 package main
 
 import (
-	"github.com/veandco/go-sdl2/sdl"
 	"gogame/ecs"
+
+	"github.com/veandco/go-sdl2/sdl"
 )
+
+var Window *sdl.Window
+var Surface *sdl.Surface
+var CurrentWorld *ecs.World
 
 func main() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
@@ -11,7 +16,8 @@ func main() {
 	}
 	defer sdl.Quit()
 
-	window, err := sdl.CreateWindow(
+	var err error
+	Window, err = sdl.CreateWindow(
 		"test",
 		sdl.WINDOWPOS_UNDEFINED,
 		sdl.WINDOWPOS_UNDEFINED,
@@ -23,17 +29,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer window.Destroy()
+	defer Window.Destroy()
 
-	surface, err := window.GetSurface()
+	Surface, err = Window.GetSurface()
 	if err != nil {
 		panic(err)
 	}
-	surface.FillRect(nil, 0)
 
-	rect := sdl.Rect{X: 0, Y: 0, W: 200, H: 200}
-	colour := sdl.Color{R: 255, G: 0, B: 255, A: 255} // purple
-	pixel := sdl.MapRGBA(surface.Format, colour.R, colour.G, colour.B, colour.A)
+	Surface.FillRect(nil, 0)
+	Window.UpdateSurface()
+	CurrentWorld = game()
 
 	running := true
 	for running {
@@ -42,11 +47,9 @@ func main() {
 			case *sdl.QuitEvent:
 				println("Closed Window")
 				running = false
-				break
 			}
 		}
 
-		surface.FillRect(&rect, pixel)
-		window.UpdateSurface()
+        CurrentWorld.RunSystems()
 	}
 }

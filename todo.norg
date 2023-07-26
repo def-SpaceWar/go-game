@@ -7,4 +7,8 @@ updated: 2023-07-25
 @end
 
 * TODO
-  - Make an ECS with proper generics
+  - ( ) Make more systems + components
+  -- Make `colors` package that works with colors.
+  -- PolygonRenderer
+  -- PolygonCollider
+  -- CollisionSystem
