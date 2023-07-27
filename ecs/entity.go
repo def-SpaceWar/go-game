@@ -8,7 +8,15 @@ type Entity struct {
 	Components []Component
 }
 
-func GetComponent[T Component](e Entity) *T {
+func (e *Entity) AddComponents(c ...Component) {
+    e.Components = append(e.Components, c...)
+}
+
+func (e *Entity) AddChildren(c ...*Entity) {
+    e.Children = append(e.Children, c...)
+}
+
+func GetComponent[T Component](e *Entity) *T {
 	for _, component := range e.Components {
 		if casted, ok := component.(T); ok {
 			return &casted
@@ -18,7 +26,7 @@ func GetComponent[T Component](e Entity) *T {
 	return nil
 }
 
-func GetComponentInChildren[T Component](e Entity) *T {
+func GetComponentInChildren[T Component](e *Entity) *T {
 	for _, child := range e.Children {
 		for _, component := range child.Components {
 			if casted, ok := component.(T); ok {

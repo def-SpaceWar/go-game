@@ -3,25 +3,24 @@ package main
 import (
 	"fmt"
 	"gogame/ecs"
+	"gogame/physics"
 )
 
 type position struct {
-    X float32
-    Y float32
+	physics.Vector
 }
-
 type velocity struct {
-    X float32
-    Y float32
+	physics.Vector
 }
 
 func main() {
-    entity := ecs.Entity{
-        Components: []ecs.Component{
-            velocity{},
-        },
-    }
+	world := ecs.CreateWorld()
+	entity := world.CreateEntity()
+	entity.AddComponents(
+		position{physics.Vector{5, 0}},
+		velocity{physics.Vector{0, 2}},
+	)
 
-    pos := *ecs.GetComponent[position](entity)
-    fmt.Println(pos) // INTENTIONAL ERROR
+	fmt.Println(ecs.GetComponent[position](entity))
+	fmt.Println(ecs.GetComponent[velocity](entity))
 }

@@ -1,0 +1,19 @@
+@document.meta
+title: TODO
+description: All the tasks pending for this project.
+authors: aryan
+created: 2023-07-27
+updated: 2023-07-27
+@end
+
+* Rendering
+  - ( ) new package `gogame/render`
+  -- ( ) Transform Component
+  -- ( ) Rectangle Component (has color)
+  -- ( ) Render System
+
+* Physics
+  - ( ) new package `gogame/physics`
+  -- ( ) Velocity Component (Positional and Rotational in one)
+  -- ( ) Forces System
+  -- ( ) Acceleration Component (Positional and Rotational in one)
