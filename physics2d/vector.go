@@ -1,4 +1,4 @@
-package physics
+package physics2d
 
 type Vector struct {
 	X float32

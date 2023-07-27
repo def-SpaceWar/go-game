@@ -3,22 +3,22 @@ package main
 import (
 	"fmt"
 	"gogame/ecs"
-	"gogame/physics"
+	"gogame/physics2d"
 )
 
 type position struct {
-	physics.Vector
+	physics2d.Vector
 }
 type velocity struct {
-	physics.Vector
+	physics2d.Vector
 }
 
 func main() {
 	world := ecs.CreateWorld()
 	entity := world.CreateEntity()
 	entity.AddComponents(
-		position{physics.Vector{5, 0}},
-		velocity{physics.Vector{0, 2}},
+		position{physics2d.Vector{5, 0}},
+		velocity{physics2d.Vector{0, 2}},
 	)
 
 	fmt.Println(ecs.GetComponent[position](entity))

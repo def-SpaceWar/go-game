@@ -7,13 +7,15 @@ updated: 2023-07-27
 @end
 
 * Rendering
-  - ( ) new package `gogame/render`
-  -- ( ) Transform Component
+  - ( ) new package `gogame/render2d`
   -- ( ) Rectangle Component (has color)
   -- ( ) Render System
 
 * Physics
-  - ( ) new package `gogame/physics`
+  - ( ) new package `gogame/physics2d`
+  -- ( ) Transform Component (Position, Rotation, and Scale!)
   -- ( ) Velocity Component (Positional and Rotational in one)
   -- ( ) Forces System
   -- ( ) Acceleration Component (Positional and Rotational in one)
+  - Collision
+  -- Add collision (this will take a WHILE)
