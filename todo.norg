@@ -17,5 +17,5 @@ updated: 2023-07-27
   -- ( ) Velocity Component (Positional and Rotational in one)
   -- ( ) Forces System
   -- ( ) Acceleration Component (Positional and Rotational in one)
-  - Collision
-  -- Add collision (this will take a WHILE)
+  - ( ) Collision
+  -- ( ) Add collision (this will take a WHILE)
