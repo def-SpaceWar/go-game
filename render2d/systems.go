@@ -15,13 +15,19 @@ type Drawable interface {
 }
 
 func CreateRenderSystem() ecs.System {
-	var err error
-	if err = sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+	err := sdl.Init(sdl.INIT_EVERYTHING)
+	if err != nil {
 		panic(err)
 	}
 
-	Window, err = sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		800, 600, sdl.WINDOW_SHOWN)
+	Window, err = sdl.CreateWindow(
+		"test",
+		sdl.WINDOWPOS_UNDEFINED,
+		sdl.WINDOWPOS_UNDEFINED,
+		800,
+		600,
+		sdl.WINDOW_SHOWN,
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -36,6 +42,16 @@ func CreateRenderSystem() ecs.System {
 			switch event.(type) {
 			case *sdl.QuitEvent:
 				ecs.Running = false
+			case *sdl.KeyboardEvent:
+				event := event.(*sdl.KeyboardEvent)
+				switch event.State {
+				case sdl.PRESSED:
+					if event.Repeat == 0 {
+						println("a")
+					}
+				case sdl.RELEASED:
+					println("b")
+				}
 			}
 		}
 
