@@ -8,6 +8,11 @@ import (
 
 var Window *sdl.Window
 var Surface *sdl.Surface
+var DeltaTime float32
+
+type Drawable interface {
+	ZIndex() int32
+}
 
 func CreateRenderSystem() ecs.System {
 	var err error
@@ -36,8 +41,15 @@ func CreateRenderSystem() ecs.System {
 
 		Surface.FillRect(nil, 0)
 		for rect := range ecs.FindComponents[Rectangle](world) {
-			Surface.FillRect(rect.Rect, rect.Color)
+			draw(rect)
 		}
 		Window.UpdateSurface()
+	}
+}
+
+func draw(drawable Drawable) {
+	rect, isRect := drawable.(*Rectangle)
+	if isRect {
+		Surface.FillRect(rect.Rect, rect.Color)
 	}
 }

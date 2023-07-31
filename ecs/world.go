@@ -29,15 +29,10 @@ func (world *World) CreateEntity(components ...Component) *Entity {
 	return &entity
 }
 
-func (world *World) CreateChildEntity(parent *Entity) *Entity {
-	entity := Entity{
-		Id:         world.entityCount,
-		Parent:     parent,
-		Components: []Component{},
-	}
-
-	world.entityCount++
-	return &entity
+func (world *World) CreateChildEntity(parent *Entity, components ...Component) *Entity {
+	entity := world.CreateEntity(components)
+	entity.Parent = parent
+	return entity
 }
 
 func (world *World) AddSystems(systems ...System) {
