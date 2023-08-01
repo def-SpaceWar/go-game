@@ -18,9 +18,8 @@ func (e *Entity) AddChildren(c ...*Entity) {
 
 func GetComponent[T Component](e *Entity) *T {
 	for _, component := range e.Components {
-		switch component.(type) {
-		case T:
-			casted := component.(T)
+		casted, ok := component.(T)
+		if ok {
 			return &casted
 		}
 	}
@@ -31,9 +30,8 @@ func GetComponents[T Component](e *Entity) chan *T {
 	c := make(chan *T)
 	go func() {
 		for _, component := range e.Components {
-			switch component.(type) {
-			case T:
-				casted := component.(T)
+			casted, ok := component.(T)
+			if ok {
 				c <- &casted
 			}
 		}
@@ -45,9 +43,8 @@ func GetComponents[T Component](e *Entity) chan *T {
 func GetComponentsSlice[T Component](e *Entity) []*T {
 	components := []*T{}
 	for _, component := range e.Components {
-		switch component.(type) {
-		case T:
-			casted := component.(T)
+		casted, ok := component.(T)
+		if ok {
 			components = append(components, &casted)
 		}
 	}
@@ -56,13 +53,14 @@ func GetComponentsSlice[T Component](e *Entity) []*T {
 
 func GetComponentInChildren[T Component](e *Entity) *T {
 	for _, child := range e.Children {
-		for _, component := range child.Components {
-			switch component.(type) {
-			case T:
-				casted := component.(T)
-				return &casted
-			}
-		}
+        component := GetComponent[T](child)
+        if component != nil {
+            return component
+        }
+        component = GetComponentInChildren[T](child)
+        if component != nil {
+            return component
+        }
 	}
-	return nil
+    return nil
 }

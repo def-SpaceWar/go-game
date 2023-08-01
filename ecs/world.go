@@ -30,7 +30,7 @@ func (world *World) CreateEntity(components ...Component) *Entity {
 }
 
 func (world *World) CreateChildEntity(parent *Entity, components ...Component) *Entity {
-	entity := world.CreateEntity(components)
+	entity := world.CreateEntity(components...)
 	entity.Parent = parent
 	return entity
 }
@@ -52,15 +52,19 @@ func (world *World) RunSystems() {
 	}
 }
 
-func FindComponents[T Component](w *World) chan *T {
-	c := make(chan *T)
+type pair[A, B any] struct {
+	First  A
+	Second B
+}
+
+func FindComponents[T Component](w *World) chan pair[*Entity, *T] {
+	c := make(chan pair[*Entity, *T])
 	go func() {
 		for _, entity := range w.Entities {
 			for _, component := range entity.Components {
-				switch component.(type) {
-				case T:
-					casted := component.(T)
-					c <- &casted
+				casted, ok := component.(T)
+				if ok {
+					c <- pair[*Entity, *T]{&entity, &casted}
 				}
 			}
 		}
@@ -69,14 +73,13 @@ func FindComponents[T Component](w *World) chan *T {
 	return c
 }
 
-func FindComponentsSlice[T Component](w *World) []*T {
-	components := []*T{}
+func FindComponentsSlice[T Component](w *World) []pair[*Entity, *T] {
+	components := []pair[*Entity, *T]{}
 	for _, entity := range w.Entities {
 		for _, component := range entity.Components {
-			switch component.(type) {
-			case T:
-				casted := component.(T)
-				components = append(components, &casted)
+			casted, ok := component.(T)
+			if ok {
+				components = append(components, pair[*Entity, *T]{&entity, &casted})
 			}
 		}
 	}

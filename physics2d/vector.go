@@ -7,49 +7,66 @@ type Vector struct {
 	Y float32
 }
 
-func (v *Vector) Clone() *Vector {
+func Vec(x, y float32) *Vector {
+	return &Vector{
+		X: x,
+		Y: y,
+	}
+}
+
+func (v *Vector) Clone() Vector {
     n := *v
-    return &n
+	return n
 }
 
 func (v *Vector) Add(o *Vector) *Vector {
-    v.X += o.X
-    v.Y += o.Y
-    return v
+	v.X += o.X
+	v.Y += o.Y
+	return v
 }
 
 func (v *Vector) Subtract(o *Vector) *Vector {
-    v.X -= o.X
-    v.Y -= o.Y
-    return v
+	v.X -= o.X
+	v.Y -= o.Y
+	return v
 }
 
 func (v *Vector) Scale(n float32) *Vector {
-    v.X *= n
-    v.Y *= n
-    return v
+	v.X *= n
+	v.Y *= n
+	return v
+}
+
+func (v *Vector) ScaleVec(o *Vector) *Vector {
+	v.X *= o.X
+	v.Y *= o.Y
+	return v
 }
 
 func (v *Vector) MagnitudeSquared() float32 {
-    return v.X * v.X + v.Y * v.Y
+	return v.X*v.X + v.Y*v.Y
 }
 
 func (v *Vector) Magnitude() float32 {
-    return float32(math.Sqrt(float64(v.MagnitudeSquared())))
+	return float32(math.Sqrt(float64(v.MagnitudeSquared())))
 }
 
 func (v *Vector) Normalize() *Vector {
-    magnitude := v.Magnitude()
-    v.X /= magnitude
-    v.Y /= magnitude
-    return v
+	magnitude := v.Magnitude()
+	v.X /= magnitude
+	v.Y /= magnitude
+	return v
 }
 
 func (v *Vector) Normal() *Vector {
-    v.X, v.Y = -v.Y, v.X
-    return v
+	v.X, v.Y = -v.Y, v.X
+	return v
+}
+
+func (v *Vector) Dot(o *Vector) float32 {
+	return v.X*o.X + v.Y*o.Y
 }
 
 func (v *Vector) Cross(o *Vector) float32 {
-    return v.X * o.Y - v.Y * o.X
+	return v.X*o.Y - v.Y*o.X
 }

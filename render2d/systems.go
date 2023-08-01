@@ -2,12 +2,13 @@ package render2d
 
 import (
 	"gogame/ecs"
+	"gogame/physics2d"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 var Window *sdl.Window
-var Surface *sdl.Surface
+var Renderer *sdl.Renderer
 var DeltaTime float32
 
 type Drawable interface {
@@ -32,7 +33,12 @@ func CreateRenderSystem() ecs.System {
 		panic(err)
 	}
 
-	Surface, err = Window.GetSurface()
+	Renderer, err = sdl.CreateRenderer(
+        Window,
+        -1,
+        sdl.RENDERER_ACCELERATED |
+        sdl.RENDERER_PRESENTVSYNC,
+    )
 	if err != nil {
 		panic(err)
 	}
@@ -55,17 +61,27 @@ func CreateRenderSystem() ecs.System {
 			}
 		}
 
-		Surface.FillRect(nil, 0)
-		for rect := range ecs.FindComponents[Rectangle](world) {
-			draw(rect)
+		Renderer.SetDrawColor(0, 0, 0, sdl.ALPHA_OPAQUE)
+        Renderer.Clear()
+		for pair := range ecs.FindComponents[Polygon](world) {
+			entity := pair.First
+			rect := pair.Second
+			draw(entity, rect)
 		}
-		Window.UpdateSurface()
+        Renderer.Present()
 	}
 }
 
-func draw(drawable Drawable) {
-	rect, isRect := drawable.(*Rectangle)
-	if isRect {
-		Surface.FillRect(rect.Rect, rect.Color)
+func draw(entity *ecs.Entity, drawable Drawable) {
+	polygon, isPolgyon := drawable.(*Polygon)
+	if isPolgyon {
+        transforms := []*physics2d.Transform{}
+        transforms = append(transforms, ecs.GetComponent[physics2d.Transform](entity))
+        // TODO Get all parent transforms too!
+		Renderer.RenderGeometry(
+            nil,
+            polygon.toVertices(transforms),
+            nil,
+        )
 	}
 }
