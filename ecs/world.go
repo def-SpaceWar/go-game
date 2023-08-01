@@ -57,14 +57,14 @@ type pair[A, B any] struct {
 	Second B
 }
 
-func FindComponents[T Component](w *World) chan pair[*Entity, *T] {
-	c := make(chan pair[*Entity, *T])
+func FindComponents[T Component](w *World) chan pair[Entity, *T] {
+	c := make(chan pair[Entity, *T])
 	go func() {
 		for _, entity := range w.Entities {
 			for _, component := range entity.Components {
 				casted, ok := component.(T)
 				if ok {
-					c <- pair[*Entity, *T]{&entity, &casted}
+					c <- pair[Entity, *T]{entity, &casted}
 				}
 			}
 		}
@@ -73,13 +73,13 @@ func FindComponents[T Component](w *World) chan pair[*Entity, *T] {
 	return c
 }
 
-func FindComponentsSlice[T Component](w *World) []pair[*Entity, *T] {
-	components := []pair[*Entity, *T]{}
+func FindComponentsSlice[T Component](w *World) []pair[Entity, *T] {
+	components := []pair[Entity, *T]{}
 	for _, entity := range w.Entities {
 		for _, component := range entity.Components {
 			casted, ok := component.(T)
 			if ok {
-				components = append(components, pair[*Entity, *T]{&entity, &casted})
+				components = append(components, pair[Entity, *T]{entity, &casted})
 			}
 		}
 	}

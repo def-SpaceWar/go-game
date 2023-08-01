@@ -13,3 +13,7 @@ func None[T any]() Maybe[T] {
 func IsNone[T any](v Maybe[T]) bool {
     return v == nil
 }
+
+func Just[T any](v Maybe[T]) T {
+    return *v
+}

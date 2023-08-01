@@ -2,6 +2,7 @@ package render2d
 
 import (
 	"gogame/ecs"
+	"gogame/fp"
 	"gogame/physics2d"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -15,7 +16,11 @@ type Drawable interface {
 	ZIndex() int32
 }
 
-func CreateRenderSystem() ecs.System {
+type RenderSystemParams struct {
+	VSYNC fp.Maybe[bool]
+}
+
+func CreateRenderSystem(params RenderSystemParams) ecs.System {
 	err := sdl.Init(sdl.INIT_EVERYTHING)
 	if err != nil {
 		panic(err)
@@ -33,12 +38,27 @@ func CreateRenderSystem() ecs.System {
 		panic(err)
 	}
 
-	Renderer, err = sdl.CreateRenderer(
-        Window,
-        -1,
-        sdl.RENDERER_ACCELERATED |
-        sdl.RENDERER_PRESENTVSYNC,
-    )
+	if !fp.IsNone(params.VSYNC) {
+		if fp.Just(params.VSYNC) {
+			Renderer, err = sdl.CreateRenderer(
+				Window,
+				-1,
+				sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC,
+			)
+		} else {
+			Renderer, err = sdl.CreateRenderer(
+				Window,
+				-1,
+				sdl.RENDERER_ACCELERATED,
+			)
+		}
+	} else {
+		Renderer, err = sdl.CreateRenderer(
+			Window,
+			-1,
+			sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC,
+		)
+	}
 	if err != nil {
 		panic(err)
 	}
@@ -62,26 +82,26 @@ func CreateRenderSystem() ecs.System {
 		}
 
 		Renderer.SetDrawColor(0, 0, 0, sdl.ALPHA_OPAQUE)
-        Renderer.Clear()
+		Renderer.Clear()
+		totalTriangles := []sdl.Vertex{}
 		for pair := range ecs.FindComponents[Polygon](world) {
 			entity := pair.First
-			rect := pair.Second
-			draw(entity, rect)
+			polygon := pair.Second
+			totalTriangles = append(totalTriangles, getTriangles(entity, polygon)...)
 		}
-        Renderer.Present()
+		Renderer.RenderGeometry(nil, totalTriangles, nil)
+		Renderer.Present()
 	}
 }
 
-func draw(entity *ecs.Entity, drawable Drawable) {
-	polygon, isPolgyon := drawable.(*Polygon)
-	if isPolgyon {
-        transforms := []*physics2d.Transform{}
-        transforms = append(transforms, ecs.GetComponent[physics2d.Transform](entity))
-        // TODO Get all parent transforms too!
-		Renderer.RenderGeometry(
-            nil,
-            polygon.toVertices(transforms),
-            nil,
-        )
+func getTriangles(entity ecs.Entity, drawable Drawable) []sdl.Vertex {
+	polygon, isPolygon := drawable.(*Polygon)
+	if isPolygon {
+		transforms := []*physics2d.Transform{}
+		transforms = append(transforms, ecs.GetComponent[physics2d.Transform](&entity))
+		// TODO Get all parent transforms too!
+		return polygon.toVertices(transforms)
 	}
+
+	return []sdl.Vertex{}
 }

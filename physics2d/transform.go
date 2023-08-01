@@ -9,27 +9,33 @@ type Transform struct {
 	//Transform *Matrix
 }
 
-func NewTransform(position *Vector, rotation fp.Maybe[float32], scale fp.Maybe[Vector]) Transform {
-	if fp.IsNone(scale) {
-		if fp.IsNone(rotation) {
+type TransformParams struct {
+	Position *Vector
+	Rotation fp.Maybe[float32]
+	Scale    fp.Maybe[Vector]
+}
+
+func NewTransform(params TransformParams) Transform {
+	if fp.IsNone(params.Scale) {
+		if fp.IsNone(params.Rotation) {
 			rotation := float32(0)
 			return Transform{
-				Position: position,
+				Position: params.Position,
 				Rotation: &rotation,
 				Scale:    Vec(1, 1),
 			}
 		}
 
 		return Transform{
-			Position: position,
-			Rotation: rotation,
+			Position: params.Position,
+			Rotation: params.Rotation,
 			Scale:    Vec(1, 1),
 		}
 	}
 
 	return Transform{
-		Position: position,
-		Rotation: rotation,
-		Scale:    scale,
+		Position: params.Position,
+		Rotation: params.Rotation,
+		Scale:    params.Scale,
 	}
 }
