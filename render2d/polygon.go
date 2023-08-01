@@ -33,8 +33,8 @@ func (p *Polygon) toVertices(transforms []*physics2d.Transform) []sdl.Vertex {
 		newVec := vec.Clone()
 		for _, transform := range transforms {
 			newVec.ScaleVec(transform.Scale)
+			newVec.Rotate(*transform.Rotation)
 			newVec.Add(transform.Position)
-			//newVec.Rotate(transform.Rotation)
 		}
 		vertices = append(vertices, sdl.Vertex{
 			Position: sdl.FPoint(newVec),

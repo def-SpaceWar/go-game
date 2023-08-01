@@ -15,7 +15,7 @@ func Vec(x, y float32) *Vector {
 }
 
 func (v *Vector) Clone() Vector {
-    n := *v
+	n := *v
 	return n
 }
 
@@ -69,4 +69,9 @@ func (v *Vector) Dot(o *Vector) float32 {
 
 func (v *Vector) Cross(o *Vector) float32 {
 	return v.X*o.Y - v.Y*o.X
+}
+
+func (v *Vector) Rotate(angle float32) *Vector {
+	v.X, v.Y = v.X*float32(math.Cos(float64(angle)))-v.Y*float32(math.Sin(float64(angle))), v.Y*float32(math.Cos(float64(angle)))+v.X*float32(math.Sin(float64(angle)))
+    return v
 }
