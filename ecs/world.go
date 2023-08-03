@@ -1,19 +1,16 @@
 package ecs
 
-var CurrentWorld *World
-var Running = true
-
 type World struct {
 	entityCount EntityID
 	Entities    []Entity
-	systems     []System
+	Systems     []System
 }
 
 func CreateWorld() World {
 	return World{
 		entityCount: 0,
 		Entities:    []Entity{},
-		systems:     []System{},
+		Systems:     []System{},
 	}
 }
 
@@ -30,26 +27,19 @@ func (world *World) CreateEntity(components ...Component) *Entity {
 }
 
 func (world *World) CreateChildEntity(parent *Entity, components ...Component) *Entity {
-	entity := world.CreateEntity(components...)
-	entity.Parent = parent
-	return entity
+	entity := Entity{
+		Id:         world.entityCount,
+		Parent:     parent,
+		Components: components,
+	}
+
+	world.Entities = append(world.Entities, entity)
+	world.entityCount++
+	return &entity
 }
 
 func (world *World) AddSystems(systems ...System) {
-	var newSystem System = func(world *World) {
-		for _, system := range systems {
-			system(world)
-		}
-	}
-
-	world.systems = append(world.systems, newSystem)
-}
-
-func (world *World) RunSystems() {
-	for _, system := range world.systems {
-		system(world)
-		//go system(world)
-	}
+	world.Systems = append(world.Systems, systems...)
 }
 
 type pair[A, B any] struct {

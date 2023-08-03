@@ -15,5 +15,8 @@ func IsNone[T any](v Maybe[T]) bool {
 }
 
 func Just[T any](v Maybe[T]) T {
+    if v == nil {
+        panic("Maybe is of nil type!")
+    }
     return *v
 }

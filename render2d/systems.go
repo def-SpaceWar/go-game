@@ -10,7 +10,6 @@ import (
 
 var Window *sdl.Window
 var Renderer *sdl.Renderer
-var DeltaTime float32
 
 type Drawable interface {
 	ZIndex() int32
@@ -38,46 +37,35 @@ func CreateRenderSystem(params RenderSystemParams) ecs.System {
 		panic(err)
 	}
 
+	vsync := true
 	if !fp.IsNone(params.VSYNC) {
-		if fp.Just(params.VSYNC) {
-			Renderer, err = sdl.CreateRenderer(
-				Window,
-				-1,
-				sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC,
-			)
-		} else {
-			Renderer, err = sdl.CreateRenderer(
-				Window,
-				-1,
-				sdl.RENDERER_ACCELERATED,
-			)
-		}
-	} else {
+		vsync = fp.Just(params.VSYNC)
+	}
+	if vsync {
 		Renderer, err = sdl.CreateRenderer(
 			Window,
 			-1,
 			sdl.RENDERER_ACCELERATED|sdl.RENDERER_PRESENTVSYNC,
+		)
+	} else {
+		Renderer, err = sdl.CreateRenderer(
+			Window,
+			-1,
+			sdl.RENDERER_ACCELERATED,
 		)
 	}
 	if err != nil {
 		panic(err)
 	}
 
-	return func(world *ecs.World) {
+	return func(world *ecs.World) (ecs.WorldState, *ecs.World) {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
-				ecs.Running = false
-			case *sdl.KeyboardEvent:
-				event := event.(*sdl.KeyboardEvent)
-				switch event.State {
-				case sdl.PRESSED:
-					if event.Repeat == 0 {
-						println("a")
-					}
-				case sdl.RELEASED:
-					println("b")
-				}
+                Renderer.Destroy()
+                Window.Destroy()
+                sdl.Quit()
+                return ecs.QUIT, nil
 			}
 		}
 
@@ -91,6 +79,8 @@ func CreateRenderSystem(params RenderSystemParams) ecs.System {
 		}
 		Renderer.RenderGeometry(nil, totalTriangles, nil)
 		Renderer.Present()
+
+        return ecs.CONTINUE, nil
 	}
 }
 
@@ -98,8 +88,12 @@ func getTriangles(entity ecs.Entity, drawable Drawable) []sdl.Vertex {
 	polygon, isPolygon := drawable.(*Polygon)
 	if isPolygon {
 		transforms := []*physics2d.Transform{}
-		transforms = append(transforms, ecs.GetComponent[physics2d.Transform](&entity))
-		// TODO Get all parent transforms too!
+		for e := &entity; e != nil; e = e.Parent {
+			transform := ecs.GetComponent[physics2d.Transform](e)
+			if transform != nil {
+				transforms = append(transforms, transform)
+			}
+		}
 		return polygon.toVertices(transforms)
 	}
 

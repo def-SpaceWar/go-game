@@ -9,13 +9,13 @@ import (
 
 type Polygon struct {
 	Points []*physics2d.Vector
-	Color  *sdl.Color
+	Color  *Color
 	zIndex *int32
 }
 
 type PolygonParams struct {
 	Points []*physics2d.Vector
-	Color  fp.Maybe[sdl.Color]
+	Color  fp.Maybe[Color]
 	ZIndex fp.Maybe[int32]
 }
 
@@ -27,23 +27,23 @@ func NewPolygon(params PolygonParams) Polygon {
 		points = params.Points
 	}
 
-	var color *sdl.Color
+	var color Color
 	if fp.IsNone(params.Color) {
 		color = RGB(255, 0, 255)
 	} else {
-		color = params.Color
+		color = fp.Just(params.Color)
 	}
 
 	var zIndex int32
 	if fp.IsNone(params.ZIndex) {
 		zIndex = 0
 	} else {
-		zIndex = *params.ZIndex
+		zIndex = fp.Just(params.ZIndex)
 	}
 
 	return Polygon{
 		Points: points,
-		Color:  color,
+		Color:  &color,
 		zIndex: &zIndex,
 	}
 }
@@ -78,7 +78,7 @@ func (p *Polygon) toVertices(transforms []*physics2d.Transform) []sdl.Vertex {
 		}
 		vertices = append(vertices, sdl.Vertex{
 			Position: sdl.FPoint(newVec),
-			Color:    *p.Color,
+			Color:    *p.Color.ToSDL(),
 		})
 	}
 	return vertices

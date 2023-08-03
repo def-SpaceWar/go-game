@@ -7,13 +7,20 @@ import (
 )
 
 var renderSystem = render2d.CreateRenderSystem(render2d.RenderSystemParams{
-    VSYNC: fp.Some(false),
+	VSYNC: fp.Some(false),
 })
 
 func main() {
-	ecs.CurrentWorld = gameWorld()
-
-	for ecs.Running {
-		ecs.CurrentWorld.RunSystems()
+	currentWorld := gameWorld()
+	running := true
+	for running {
+		for _, system := range currentWorld.Systems {
+			state, nextWorld := system(currentWorld)
+			if state == ecs.QUIT {
+				running = false
+			} else if state == ecs.SWITCH {
+				currentWorld = nextWorld
+			}
+		}
 	}
 }

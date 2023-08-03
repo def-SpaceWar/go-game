@@ -1,2 +1,4 @@
+github.com/orcaman/concurrent-map/v2 v2.0.1 h1:jOJ5Pg2w1oeB6PeDurIYf6k9PQ+aTITr/6lP/L/zp6c=
+github.com/orcaman/concurrent-map/v2 v2.0.1/go.mod h1:9Eq3TG2oBe5FirmYWQfYO5iH1q0Jv47PLaNK++uCdOM=
 github.com/veandco/go-sdl2 v0.4.35 h1:NohzsfageDWGtCd9nf7Pc3sokMK/MOK+UA2QMJARWzQ=
 github.com/veandco/go-sdl2 v0.4.35/go.mod h1:OROqMhHD43nT4/i9crJukyVecjPNYYuCofep6SNiAjY=
